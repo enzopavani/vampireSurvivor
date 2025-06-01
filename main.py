@@ -1,16 +1,28 @@
 from settings import *
 from player import Player
+from sprites import *
+
+from random import randint
 
 class Game():
   def __init__(self):
+    # setup
     self.displaySurface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
     pygame.display.set_caption("Human Survivors")
     self.clock = pygame.time.Clock()
     self.running = True
     self.FPS = 60
     
+    # groups
     self.allSprites = pygame.sprite.Group()
-    self.player = Player(self.allSprites, (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2))
+    self.collisionSprites = pygame.sprite.Group()
+    
+    # sprites
+    self.player = Player(self.allSprites, (200, 300), self.collisionSprites)
+    for i in range(6):
+      x, y = randint(0, WINDOW_WIDTH), randint(0, WINDOW_HEIGHT)
+      w, h = randint(50, 100), randint(40, 100)
+      CollisionSprite((self.allSprites, self.collisionSprites), (x, y), (w, h))
 
   def run(self):
     while self.running:
@@ -22,7 +34,10 @@ class Game():
           if event.key == pygame.K_ESCAPE:
             self.running = False
 
+      # update
       self.allSprites.update(dt)
+      
+      # draw
       self.displaySurface.fill("#000000")
       self.allSprites.draw(self.displaySurface)
 
